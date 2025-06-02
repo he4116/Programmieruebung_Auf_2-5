@@ -70,19 +70,41 @@ def zone_plot(df, max_hr):
     df = df.copy()
     df["Zone"] = berechne_zonen(df["HeartRate"], max_hr)
 
-    fig = go.Figure()
+    fig = px.scatter(df, x="Time", y="HeartRate", color="Zone")
 
+    color = {
+        "Zone 1": "blue",
+        "Zone 2": "green",
+        "Zone 3": "yellow",
+        "Zone 4": "orange",
+        "Zone 5": "red"
+    }
+
+    # Linie für PowerOriginal hinzufügen
     fig.add_trace(go.Scatter(
         x=df["Time"],
-        y=df["HeartRate"],
-        mode='lines',
-        name='Heart Rate',
-        line=dict(color='blue')
+        y=df["PowerOriginal"],
+        mode="lines",
+        name="PowerOriginal",
+        line=dict(color="black", width=1)
     ))
 
     return fig
-    
 
+def data_zones(df, max_hr):
+    df = df.copy()
+    df["Zone"] = berechne_zonen(df["HeartRate"], max_hr)
+
+    # Berechnung der Zeit in jeder Zone
+    zone_times = df.groupby("Zone").size() * (1 / 60)  # Zeit in Minuten
+    zone_averagePower = df.groupby("Zone")["PowerOriginal"].mean()
+
+    # Erstellen eines DataFrames für die Anzeige
+    zone_df = pd.DataFrame({
+        "Time (min)": zone_times,
+        "Average Power (W)": zone_averagePower
+    }).reset_index()
+    return zone_df
 
 
 
@@ -99,3 +121,5 @@ if __name__ == "__main__":
     #print(zone_dict)
     fig = zone_plot(df, max_hr)
     fig.show()
+    zone_df = time_zones(df, max_hr)
+    #print(zone_df)

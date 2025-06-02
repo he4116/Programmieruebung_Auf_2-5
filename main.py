@@ -7,6 +7,7 @@ from read_pandas import read_my_csv
 from read_pandas import make_plot
 from read_pandas import get_zone_limits
 from read_pandas import zone_plot
+from read_pandas import data_zones
 
 
 tab1, tap2 = st.tabs(["Versuchsperson", "Daten"])
@@ -46,9 +47,14 @@ with tap2:
     fig = make_plot(df)
     st.plotly_chart(fig, use_container_width=True)
 
-    st.number_input("Geben Sie die maximale Herzfrequenz ein:",value=130 , key="max_hr")
+
+    st.number_input("Geben Sie die maximale Herzfrequenz ein:",value= int(df["HeartRate"].mean()) , key="max_hr")
 
     max_hr = st.session_state.max_hr	
     zone_dict = get_zone_limits(max_hr)
     fig = zone_plot(df, max_hr)
     st.plotly_chart(fig, use_container_width=True)
+
+    zone_df = data_zones(df, max_hr)
+    st.write("Zeit in den Zonen:")
+    st.dataframe(zone_df)
