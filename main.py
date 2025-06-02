@@ -46,7 +46,9 @@ with tap2:
     fig = make_plot(df)
     st.plotly_chart(fig, use_container_width=True)
 
-    max_hr = df["HeartRate"].max()
+    st.number_input("Geben Sie die maximale Herzfrequenz ein:",value=130 , key="max_hr")
+
+    max_hr = st.session_state.max_hr	
     zone_dict = get_zone_limits(max_hr)
     fig = zone_plot(df, max_hr)
     st.plotly_chart(fig, use_container_width=True)

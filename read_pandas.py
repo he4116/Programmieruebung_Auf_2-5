@@ -4,6 +4,7 @@
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
 # Paket
 ## zuvor !pip install plotly
 ## ggf. auch !pip install nbformat
@@ -38,52 +39,50 @@ def make_plot(df):
     fig = px.line(df, x="Time", y=["PowerOriginal", "HeartRate"])
     return fig
 
+
 def get_zone_limits(max_hr): 
-    zone_1 =[0.5 * max_hr, 0.6 * max_hr]
-    zone_2 = [0.6 * max_hr, 0.7 * max_hr]
-    zone_3 = [0.7 * max_hr, 0.8 * max_hr]
-    zone_4 = [0.8 * max_hr, 0.9 * max_hr]
-    zone_5 = [0.9 * max_hr, max_hr]
-    zone_dict = {
-        "Zone 1": zone_1,
-        "Zone 2": zone_2,
-        "Zone 3": zone_3,
-        "Zone 4": zone_4,
-        "Zone 5": zone_5
-    }   
-    return zone_dict
+    return {
+        "Zone 1": [0.5 * max_hr, 0.6 * max_hr],
+        "Zone 2": [0.6 * max_hr, 0.7 * max_hr],
+        "Zone 3": [0.7 * max_hr, 0.8 * max_hr],
+        "Zone 4": [0.8 * max_hr, 0.9 * max_hr],
+        "Zone 5": [0.9 * max_hr, max_hr]}
+
+
+def berechne_zonen(hr_series, max_hr):
+    
+    zones = []
+    for hr in hr_series:
+        if hr < 0.6 * max_hr:
+            zones.append("Zone 1")
+        elif hr < 0.7 * max_hr:
+            zones.append("Zone 2")
+        elif hr < 0.8 * max_hr:
+            zones.append("Zone 3")
+        elif hr < 0.9 * max_hr:
+            zones.append("Zone 4")
+        else:
+            zones.append("Zone 5")
+    return zones
+
 
 def zone_plot(df, max_hr):
-    # Berechne Herzfrequenz-Zonen
-    zones = get_zone_limits(max_hr)
+    df = df.copy()
+    df["Zone"] = berechne_zonen(df["HeartRate"], max_hr)
 
-    # Plot mit Herzfrequenz über Zeit
-    fig = px.line(df, x="Time", y=["HeartRate", "PowerOriginal"], title="Herzfrequenz über Zeit",
-                  labels={"Time": "Zeit (s)", "HeartRate": "Herzfrequenz (bpm)"})
+    fig = go.Figure()
 
-    # Füge farbige Zonen als horizontale Bänder hinzu
-    for zone_name, (lower, upper) in zones.items():
-        fig.add_shape(
-            type="rect",
-            x0=df["Time"].min(), x1=df["Time"].max(),
-            y0=lower, y1=upper,
-            fillcolor=_zone_color(zone_name),  # siehe Funktion unten
-            opacity=0.2,
-            layer="below",
-            line_width=0)
-    
+    fig.add_trace(go.Scatter(
+        x=df["Time"],
+        y=df["HeartRate"],
+        mode='lines',
+        name='Heart Rate',
+        line=dict(color='blue')
+    ))
+
     return fig
+    
 
-# Farben für die Zonen definieren
-def _zone_color(zone_name):
-    colors = {
-        "Zone 1": "lightblue",
-        "Zone 2": "lightgreen",
-        "Zone 3": "yellow",
-        "Zone 4": "orange",
-        "Zone 5": "red"
-    }
-    return colors.get(zone_name, "gray")
 
 
 
