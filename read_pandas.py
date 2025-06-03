@@ -109,6 +109,51 @@ def data_zones(df, max_hr):
 
 
 
+
+
+
+
+#Power Curve
+df = read_my_csv()
+series = df["PowerOriginal"]
+
+
+def find_best_effort(series, Windowsize):
+    """Finds the best effort in a series of power values."""
+    best_effort = 0
+    for i in range(len(series) - Windowsize + 1):
+        current_effort = series[i:i + Windowsize].mean()
+        if current_effort > best_effort:
+            best_effort = current_effort
+    return best_effort
+
+Windowsize = [10,30, 60, 120, 300, 600, 900, 1800, 3600]  # in seconds
+def create_power_curve(series, Windowsize):
+    """Creates a power curve based on the best efforts over different window sizes."""
+    power_curve = []
+    for window in Windowsize:
+        best_effort = find_best_effort(series, window)
+        power_curve.append(best_effort)
+    power_curve_df = pd.DataFrame({
+       "Time (s)": Windowsize,
+       "Best Effort (W)": power_curve
+    })
+
+    return power_curve_df
+
+
+# plot der PowerCurve
+def plot_power_curve(power_curve_df):
+    """Plots the power curve."""
+    power_curve_df = power_curve_df.copy()
+    power_curve_df["Time (min)"] = power_curve_df["Time (s)"] / 60
+    fig = px.line(power_curve_df , x="Time (min)", y="Best Effort (W)", markers=True)
+    #fig.update_layout(xaxis_title="Time (s)", yaxis_title="Best Effort (W)")
+    return fig
+
+
+
+
 if __name__ == "__main__":
     df = read_my_csv()
     print(df.head())
@@ -117,9 +162,15 @@ if __name__ == "__main__":
     #fig.show()
     max_hr = df["HeartRate"].max()
     #print("Max Heart Rate:", max_hr)
-    zone_dict = get_zone_limits(max_hr)
+   # zone_dict = get_zone_limits(max_hr)
     #print(zone_dict)
-    fig = zone_plot(df, max_hr)
-    fig.show()
-    zone_df = time_zones(df, max_hr)
+    #fig = zone_plot(df, max_hr)
+    #fig.show()
+    #zone_df = data_zones(df, max_hr)
     #print(zone_df)
+
+    print("Best Effort:", find_best_effort(series, Windowsize=60))
+    print("Power Curve:", create_power_curve(series, Windowsize))
+    fig = plot_power_curve(create_power_curve(series, Windowsize))
+    fig.show()
+    
