@@ -149,8 +149,9 @@ def plot_power_curve(power_curve_df):
     power_curve_df["Time (min)"] = power_curve_df["Time (s)"] / 60
     fig = px.line(power_curve_df , x="Time (min)", y="Best Effort (W)", markers=True)
     #fig.update_layout(xaxis_title="Time (s)", yaxis_title="Best Effort (W)")
+    #speichern des Plots als Bild
+    fig.write_image("output/power_curve.png")
     return fig
-
 
 
 
@@ -169,8 +170,9 @@ if __name__ == "__main__":
     #zone_df = data_zones(df, max_hr)
     #print(zone_df)
 
-    print("Best Effort:", find_best_effort(series, Windowsize=60))
-    print("Power Curve:", create_power_curve(series, Windowsize))
-    fig = plot_power_curve(create_power_curve(series, Windowsize))
+    #print("Best Effort:", find_best_effort(series, Windowsize=60))
+    pow_df = create_power_curve(series, Windowsize)
+    print("Power Curve:", pow_df)
+    fig = plot_power_curve(pow_df)
     fig.show()
     
