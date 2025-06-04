@@ -47,6 +47,9 @@ with tap2:
     fig = make_plot(df)
     st.plotly_chart(fig, use_container_width=True)
 
+    st.write("Maximale Leistung: ", int(df["PowerOriginal"].max()))
+    st.write("Durchschnittliche Leistung: ", int(df["PowerOriginal"].mean()))
+    
 
     st.number_input("Geben Sie die maximale Herzfrequenz ein:",value= int(df["HeartRate"].mean()) , key="max_hr")
 
