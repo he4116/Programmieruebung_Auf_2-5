@@ -16,4 +16,4 @@ Aus dem Datensatz haben wir die Daten in fünf Zonen (Herzfrequenz) geteilt und 
 ## Aufgabe 4 
 Die Aufgabe war, dass eine Leistungskurve erstellt wird basierend auf den Leistungsdaten in Watt und der Zeit in Minuten oder Sekunden. Es wird ein Algorithmus geschrieben, welcher die Peaks in einem EKG-Signal findet, um daraus die Herzfrequenz zu bestimmen. Dabei soll die Funktion für alle Leistungen in Watt anwendbar sein, die als Serie oder numpy-Array vorliegen. 
 Zunächst haben wir ein Dataframe erstellt, was die Leistung und die Zeit enthält. Daraus haben wir im Anschluss einen Plot erstellt, der die PowerCurve darstellt. 
- 
+ ![alt text](power_curve.png)

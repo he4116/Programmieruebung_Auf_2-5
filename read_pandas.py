@@ -150,7 +150,7 @@ def plot_power_curve(power_curve_df):
     fig = px.line(power_curve_df , x="Time (min)", y="Best Effort (W)", markers=True)
     #fig.update_layout(xaxis_title="Time (s)", yaxis_title="Best Effort (W)")
     #speichern des Plots als Bild
-    fig.write_image("output/power_curve.png")
+    fig.write_image("power_curve.png")
     return fig
 
 
@@ -175,4 +175,5 @@ if __name__ == "__main__":
     print("Power Curve:", pow_df)
     fig = plot_power_curve(pow_df)
     fig.show()
+    
     
