@@ -8,6 +8,8 @@ from read_pandas import make_plot
 from read_pandas import get_zone_limits
 from read_pandas import zone_plot
 from read_pandas import data_zones
+from person import Person
+from ekgdata import EKGdata
 
 
 tab1, tap2 = st.tabs(["Versuchsperson", "Daten"])
@@ -38,6 +40,25 @@ with tab1:
     image = Image.open(person["picture_path"])
     # Anzeigen eines Bilds mit Caption
     st.image(image, caption=st.session_state.current_user)
+
+    my_currrent_person = Person(person)
+    st.write("Geburtsdatum: ", my_currrent_person.date_of_birth)
+    st.write("ID: ", my_currrent_person.id)
+    st.write("Alter: ", Person.calc_age(my_currrent_person.date_of_birth))
+    st.write("max. Herzfrequenz basierend auf Geschecht und Alter: ", my_currrent_person.calc_max_heart_rate())
+
+    #threshold = 340
+    #respacing_factor = 5
+
+    # Dropdown-Liste für EKG-Tests
+    ekg_tests = person.get('ekg_tests', [])
+    ekg_ids = [test['id'] for test in ekg_tests]
+    selected_ekg_id = st.selectbox("Wähle eine EKG-Test-ID aus:", ekg_ids)
+    ekg_dict = EKGdata.load_by_id(ekg_tests, selected_ekg_id)
+    ekg = EKGdata(ekg_dict)
+
+    fig = ekg.plot_time_series()
+    st.plotly_chart(fig, use_container_width=True)
 
 with tap2:
     st.write("## EKG-Daten")
