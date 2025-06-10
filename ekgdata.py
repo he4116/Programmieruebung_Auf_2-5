@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 import plotly.express as px
-
+import plotly.graph_objects as go
 
 # Klasse EKG-Data für Peakfinder, die uns ermöglicht peaks zu finden
 
@@ -25,8 +25,9 @@ class EKGdata:
 
     def find_peaks(self, threshold, respacing_factor):
 
+        df_2000 = self.df.head(2000)
         # Respace the series
-        series = self.df["Messwerte in mV"].iloc[::respacing_factor]
+        series = df_2000["Messwerte in mV"].iloc[::respacing_factor]
         
 
         # Filter the series
@@ -44,13 +45,42 @@ class EKGdata:
 
             if last < current and current > next and current > threshold:
                 peaks.append(index - respacing_factor)
+                #if 0<= index <2000:
+                    #peaks.append(current)
+            
+            df_2000.loc[:, "is_peak"] = False
+            df_2000.loc[peaks, "is_peak"] = True
+            self.df.loc[:, "is_peak"] = False
+            self.df.loc[peaks, "is_peak"] = True
 
         return peaks
+    
+    
+    def estimate_hr(self, peaks):
+        heart_rates = []
+        zeit_in_ms = self.df["Zeit in ms"]
+        for i in range(len(peaks)-1):
+            interval = zeit_in_ms.iloc[peaks[i+1]]-zeit_in_ms.iloc[peaks[i]]
+            if interval > 0:
+                bpm = 60000 / interval
+                heart_rates.append(bpm)
+        avg_heart_rate = sum(heart_rates) / len(heart_rates) if heart_rates else 0
+        return avg_heart_rate
 
     def plot_time_series(self):
 
+        df_2000 = self.df.head(2000)
+        peak_times = df_2000.loc[self.find_peaks(threshold=360, respacing_factor=5), "Zeit in ms"].tolist()
+        peak_values = df_2000.loc[self.find_peaks(threshold=360, respacing_factor=5), "Messwerte in mV"].tolist()
+
         # Erstellte einen Line Plot, der ersten 2000 Werte mit der Zeit aus der x-Achse
         self.fig = px.line(self.df.head(2000), x="Zeit in ms", y="Messwerte in mV")
+        self.fig.add_trace(go.Scatter(
+            x=peak_times,
+            y=peak_values,
+            mode='markers',
+            marker=dict(color='red', size=8),
+            name='Peaks'))
         return self.fig 
 
 if __name__ == "__main__":

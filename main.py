@@ -47,8 +47,6 @@ with tab1:
     st.write("Alter: ", Person.calc_age(my_currrent_person.date_of_birth))
     st.write("max. Herzfrequenz basierend auf Geschecht und Alter: ", my_currrent_person.calc_max_heart_rate())
 
-    #threshold = 340
-    #respacing_factor = 5
 
     # Dropdown-Liste für EKG-Tests
     ekg_tests = person.get('ekg_tests', [])
@@ -57,8 +55,18 @@ with tab1:
     ekg_dict = EKGdata.load_by_id(ekg_tests, selected_ekg_id)
     ekg = EKGdata(ekg_dict)
 
+    threshold = 360
+    respacing_factor = 5
     fig = ekg.plot_time_series()
     st.plotly_chart(fig, use_container_width=True)
+    
+    #df_2000 = ekg.df.head(2000)
+    #peak_times = df_2000.loc[ekg.find_peaks(threshold, respacing_factor), "Zeit in ms"].tolist()
+    #peak_values = df_2000.loc[ekg.find_peaks(threshold, respacing_factor), "Messwerte in mV"].tolist()
+   
+    peaks = ekg.find_peaks(threshold, respacing_factor)
+    st.write("Herzfrequenz basierend auf den Peaks: ", int(ekg.estimate_hr(peaks)))
+
 
 with tap2:
     st.write("## EKG-Daten")
