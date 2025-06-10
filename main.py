@@ -12,7 +12,7 @@ from person import Person
 from ekgdata import EKGdata
 
 
-tab1, tap2 = st.tabs(["Versuchsperson", "Daten"])
+tab1, tab2 = st.tabs(["Versuchsperson", "Daten"])
 
 with tab1:
 #funktionen müssen ienmal importiert werden zum aufrufen
@@ -55,20 +55,21 @@ with tab1:
     ekg_dict = EKGdata.load_by_id(ekg_tests, selected_ekg_id)
     ekg = EKGdata(ekg_dict)
 
-    threshold = 360
-    respacing_factor = 5
-    fig = ekg.plot_time_series()
+    threshold = 340
+    respacing_factor = 2
+    peaks = ekg.find_peaks(threshold, respacing_factor)
+    fig = ekg.plot_time_series(peaks)
     st.plotly_chart(fig, use_container_width=True)
     
     #df_2000 = ekg.df.head(2000)
     #peak_times = df_2000.loc[ekg.find_peaks(threshold, respacing_factor), "Zeit in ms"].tolist()
     #peak_values = df_2000.loc[ekg.find_peaks(threshold, respacing_factor), "Messwerte in mV"].tolist()
    
-    peaks = ekg.find_peaks(threshold, respacing_factor)
+    
     st.write("Herzfrequenz basierend auf den Peaks: ", int(ekg.estimate_hr(peaks)))
 
 
-with tap2:
+with tab2:
     st.write("## EKG-Daten")
     st.write("Hier werden die EKG-Daten angezeigt.")
 

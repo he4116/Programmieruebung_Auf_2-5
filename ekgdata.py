@@ -25,9 +25,9 @@ class EKGdata:
 
     def find_peaks(self, threshold, respacing_factor):
 
-        df_2000 = self.df.head(2000)
+
         # Respace the series
-        series = df_2000["Messwerte in mV"].iloc[::respacing_factor]
+        series = self.df["Messwerte in mV"].iloc[::respacing_factor]
         
 
         # Filter the series
@@ -48,8 +48,8 @@ class EKGdata:
                 #if 0<= index <2000:
                     #peaks.append(current)
             
-            df_2000.loc[:, "is_peak"] = False
-            df_2000.loc[peaks, "is_peak"] = True
+            self.df.loc[:, "is_peak"] = False
+            self.df.loc[peaks, "is_peak"] = True
             self.df.loc[:, "is_peak"] = False
             self.df.loc[peaks, "is_peak"] = True
 
@@ -67,27 +67,29 @@ class EKGdata:
         avg_heart_rate = sum(heart_rates) / len(heart_rates) if heart_rates else 0
         return avg_heart_rate
 
-    def plot_time_series(self):
+    def plot_time_series(self, peaks):
 
-        df_2000 = self.df.head(2000)
-        peak_times = df_2000.loc[self.find_peaks(threshold=360, respacing_factor=5), "Zeit in ms"].tolist()
-        peak_values = df_2000.loc[self.find_peaks(threshold=360, respacing_factor=5), "Messwerte in mV"].tolist()
+        
+        peak_times = self.df.loc[peaks, "Zeit in ms"].tolist()
+        peak_values = self.df.loc[peaks, "Messwerte in mV"].tolist()
 
-        # Erstellte einen Line Plot, der ersten 2000 Werte mit der Zeit aus der x-Achse
-        self.fig = px.line(self.df.head(2000), x="Zeit in ms", y="Messwerte in mV")
+        
+        self.fig = px.line(self.df, x="Zeit in ms", y="Messwerte in mV")
         self.fig.add_trace(go.Scatter(
             x=peak_times,
             y=peak_values,
             mode='markers',
             marker=dict(color='red', size=8),
             name='Peaks'))
+        zeit_start = self.df["Zeit in ms"][0]
+        self.fig.update_layout(xaxis=dict(range=[zeit_start, (zeit_start+30000)]))
         return self.fig 
 
 if __name__ == "__main__":
     print("This is a module with some functions to read the EKG data")
     file = open("data/person_db.json")
     person_data = json.load(file)
-    ekg_dict = person_data[0]["ekg_tests"][0]
+    ekg_dict = person_data[0]["ekg_tests"][1]
     print(ekg_dict)
     ekg = EKGdata(ekg_dict)
     print(ekg.df.head())
