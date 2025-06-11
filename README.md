@@ -16,7 +16,7 @@ Aus dem Datensatz haben wir die Daten in fünf Zonen (Herzfrequenz) geteilt und 
 ## Aufgabe 4 
 Die Aufgabe war, dass eine Leistungskurve erstellt wird basierend auf den Leistungsdaten in Watt und der Zeit in Minuten oder Sekunden. Es wird ein Algorithmus geschrieben, welcher die Peaks in einem EKG-Signal findet, um daraus die Herzfrequenz zu bestimmen. Dabei soll die Funktion für alle Leistungen in Watt anwendbar sein, die als Serie oder numpy-Array vorliegen. 
 Zunächst haben wir ein Dataframe erstellt, was die Leistung und die Zeit enthält. Daraus haben wir im Anschluss einen Plot erstellt, der die PowerCurve darstellt. 
- ![alt text](power_curve.png)
+![alt text](power_curve.png)
 
 ## Aufgabe 5
 In Aufgabe 5 fügen wir erstmals Klassen ein und arbeiten mit ihnen, indem wir diese dann im main.py einfügen. Zuerst haben wir person.py und ekgdata.py angelegt. Dafür haben wir den vorhandenen Code von person.py verwendet und in unserem person.py eingefügt. Dann wurde calc_age() angelegt, welche das Alter basierend auf dem Geburtsjahr anzeigen soll und danach calc_max_heart_rate(), die die maximale Herzfrequenz basierend auf dem Alter und dem Geschlecht berechnet. Da das Geschlecht von den Personen in unserem Datensatz noch nicht vorhanden war, haben wir dieses hinzugefügt. Zuletzt fügen wir load_by_id() hinzu, was eine Person instanziieren soll anhan der ID und der Datenbank. Diese load_by_id() ist allerdings nur im Code zu finden, nicht aber auf der Website, weil jede Person nur eine ID hat und es deswegen realtiv sinnbefreit wäre. 
