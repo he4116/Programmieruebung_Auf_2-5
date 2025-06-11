@@ -146,8 +146,8 @@ def create_power_curve(series, Windowsize):
 def plot_power_curve(power_curve_df):
     """Plots the power curve."""
     power_curve_df = power_curve_df.copy()
-    power_curve_df["Time (min)"] = power_curve_df["Time (s)"] / 60
-    fig = px.line(power_curve_df , x="Time (min)", y="Best Effort (W)", markers=True)
+    power_curve_df["Time (min)"] = power_curve_df["Time (s)"]
+    fig = px.line(power_curve_df , x="Time (s)", y="Best Effort (W)", markers=True)
     #fig.update_layout(xaxis_title="Time (s)", yaxis_title="Best Effort (W)")
     #speichern des Plots als Bild
     fig.write_image("power_curve.png")
